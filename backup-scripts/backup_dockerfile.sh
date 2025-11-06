@@ -2,10 +2,19 @@
 #!/bin/bash
 set -e
 
-DOCKERFILE_PATH="./Dockerfile"
-BACKUP_DIR="./dockerfile-backups"
+# Find the workspace root (script should be called as ./backup-scripts/backup_dockerfile.sh)
+WORKSPACE="$(cd "$(dirname "$0")/.." && pwd)"
+DOCKERFILE_PATH="$WORKSPACE/Dockerfile"
+BACKUP_DIR="$WORKSPACE/dockerfile-backups"
 BACKUP_REPO="git@github.com:komalgt/dockerfile-backups.git"
 
+# Ensure Dockerfile exists
+if [ ! -f "$DOCKERFILE_PATH" ]; then
+    echo "ERROR: Dockerfile not found at $DOCKERFILE_PATH"
+    exit 1
+fi
+
+# Clone backup repo if needed
 if [ ! -d "$BACKUP_DIR/.git" ]; then
     git clone "$BACKUP_REPO" "$BACKUP_DIR"
 fi
@@ -19,6 +28,8 @@ cp "$DOCKERFILE_PATH" "Dockerfile.backup.$TIMESTAMP"
 git add "Dockerfile.backup.$TIMESTAMP"
 git config user.name "Jenkins Backup"
 git config user.email "jenkins-bot@example.com"
-git commit -m "Backup Dockerfile at $TIMESTAMP"
+
+git commit -m "Backup Dockerfile at $TIMESTAMP" || echo "No changes to commit."
 git push
-cd -
+
+cd "$WORKSPACE"
