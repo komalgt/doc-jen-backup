@@ -2,13 +2,20 @@
 pipeline {
     agent any
     stages {
-        stage('Backup Dockerfile') {    // Step 1: Run backup
+        stage('Prepare SSH') {
+            steps {
+                sh 'mkdir -p $HOME/.ssh'
+                sh 'ssh-keyscan github.com >> $HOME/.ssh/known_hosts'
+                sh 'chmod 600 $HOME/.ssh/known_hosts'
+            }
+        }
+        stage('Backup Dockerfile') {
             steps {
                 sh 'chmod +x backup-scripts/backup_dockerfile.sh'
                 sh './backup-scripts/backup_dockerfile.sh'
             }
         }
-        stage('Build and Run App') {    // Step 2: Build app / placeholder
+        stage('Build and Run App') {
             steps {
                 echo 'Build or run app commands go here'
             }
