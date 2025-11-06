@@ -2,15 +2,15 @@
 pipeline {
     agent any
     stages {
-        stage('Backup Dockerfile') {
+        stage('Backup Dockerfile') {    // Step 1: Run backup
             steps {
-                sh 'chmod +x backup_dockerfile.sh'
-                sh './backup_dockerfile.sh'
+                sh 'chmod +x backup-scripts/backup_dockerfile.sh'
+                sh './backup-scripts/backup_dockerfile.sh'
             }
         }
-        stage('Update/Deploy') {
+        stage('Build and Run App') {    // Step 2: Build app / placeholder
             steps {
-                echo '...do your update steps here...'
+                echo 'Build or run app commands go here'
             }
         }
     }
